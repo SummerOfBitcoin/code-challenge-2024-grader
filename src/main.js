@@ -59,7 +59,8 @@ function run() {
   const setupCommand = core.getInput('setup-command')
   const command = core.getInput('command', {required: true})
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
-  const maxScore = parseInt(core.getInput('max-score') || 100000000)
+  const maxScore = parseInt(core.getInput('max-score') || 100)
+  const maxFee = parseInt(core.getInput('max-fee') || 100000000)
 
   let output = ''
   let startTime
@@ -76,7 +77,7 @@ function run() {
     endTime = new Date()
 
     const {fee, weight} = JSON.parse(readFileSync('result.json', 'utf8'))
-    const score = calculateScore(fee, maxScore, weight, 4000000)
+    const score = calculateScore(fee, maxFee, weight, 4000000)
 
     result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
