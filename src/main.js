@@ -1,5 +1,6 @@
 const core = require('@actions/core')
 const {execSync} = require('child_process')
+const {readFileSync} = require('fs')
 
 const env = {
   PATH: process.env.PATH,
@@ -35,15 +36,15 @@ function generateResult(status, testName, command, message, duration, maxScore) 
 
 function getErrorMessageAndStatus(error, command) {
   if (error.message.includes('ETIMEDOUT')) {
-    return { status: 'error', errorMessage: 'Command timed out' }
+    return {status: 'error', errorMessage: 'Command timed out'}
   }
   if (error.message.includes('command not found')) {
-    return { status: 'error', errorMessage: `Unable to locate executable file: ${command}` }
+    return {status: 'error', errorMessage: `Unable to locate executable file: ${command}`}
   }
   if (error.message.includes('Command failed')) {
-    return { status: 'fail', errorMessage: 'failed with exit code 1' }
+    return {status: 'fail', errorMessage: 'failed with exit code 1'}
   }
-  return  { status: 'error', errorMessage: error.message }
+  return {status: 'error', errorMessage: error.message}
 }
 
 function run() {
@@ -66,6 +67,8 @@ function run() {
     startTime = new Date()
     output = execSync(command, {timeout, env}).toString()
     endTime = new Date()
+
+    console.log(readFileSync('result.json', 'utf8'))
 
     result = generateResult('pass', testName, command, output, endTime - startTime, maxScore)
   } catch (error) {
