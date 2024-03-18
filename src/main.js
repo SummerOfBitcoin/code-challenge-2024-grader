@@ -14,7 +14,7 @@ function btoa(str) {
   return Buffer.from(str).toString('base64')
 }
 
-function generateResult(status, testName, command, message, duration, maxScore) {
+function generateResult(status, testName, command, message, duration, maxScore, score = 0) {
   return {
     version: 1,
     status,
@@ -23,7 +23,7 @@ function generateResult(status, testName, command, message, duration, maxScore) 
       {
         name: testName,
         status,
-        score: status === 'pass' ? maxScore : 0,
+        score,
         message,
         test_code: command,
         filename: '',
@@ -47,12 +47,18 @@ function getErrorMessageAndStatus(error, command) {
   return {status: 'error', errorMessage: error.message}
 }
 
+function calculateScore(fee, maxFee, weight, maxWeight) {
+  const feeScore = (BigInt(fee) * 100n) / BigInt(maxFee)
+  const weightScore = (BigInt(weight) * 100n) / BigInt(maxWeight)
+  return (feeScore + weightScore) / 2n
+}
+
 function run() {
   const testName = core.getInput('test-name', {required: true})
   const setupCommand = core.getInput('setup-command')
   const command = core.getInput('command', {required: true})
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
-  const maxScore = parseInt(core.getInput('max-score') || 0)
+  const maxScore = parseInt(core.getInput('max-score') || 100000000)
 
   let output = ''
   let startTime
@@ -68,13 +74,14 @@ function run() {
     output = execSync(command, {timeout, env}).toString()
     endTime = new Date()
 
-    console.log(readFileSync('result.json', 'utf8'))
+    const {fee, weight} = JSON.parse(readFileSync('result.json', 'utf8'))
+    const score = calculateScore(fee, maxScore, weight, 4000000)
 
-    result = generateResult('pass', testName, command, output, endTime - startTime, maxScore)
+    result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
-    result = generateResult(status, testName, command, errorMessage, endTime - startTime, maxScore)
+    result = generateResult(status, testName, command, errorMessage, endTime - startTime, maxScore, 0)
   }
 
   core.setOutput('result', btoa(JSON.stringify(result)))
