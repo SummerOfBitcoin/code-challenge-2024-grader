@@ -78,11 +78,7 @@ function run() {
 
     const {fee, weight} = JSON.parse(readFileSync('result.json', 'utf8'))
     const score = calculateScore(fee, maxFee, weight, 4000000)
-    console.log(`Score: ${score}`)
-    console.log(`Fee: ${fee}`)
-    console.log(`Weight: ${weight}`)
-    console.log(`Max Fee: ${maxFee}`)
-    console.log(`Max Weight: 4000000`)
+    console.log(`Score: ${score}\nFee: ${fee}\nWeight: ${weight}\nMax Fee: ${maxFee}\nMax Weight: 4000000`)
 
     result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
   } catch (error) {
