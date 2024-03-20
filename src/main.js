@@ -82,6 +82,7 @@ function run() {
     console.log(`Score: ${score}\nFee: ${fee}\nWeight: ${weight}\nMax Fee: ${maxFee}\nMax Weight: 4000000`)
 
     if (score < passingScore) {
+      console.log(`You must have a score of at least ${passingScore} to pass the test. Your score was ${score}.`)
       result = generateResult(
         'fail',
         testName,
