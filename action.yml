@@ -17,7 +17,13 @@ inputs:
     required: false
   max-score:
     description: "Maximum points awarded upon a successful test."
-    required: false
+    required: true
+  max-fee:
+    description: "Maximum fee for the test."
+    required: true
+  passing-score:
+    description: "Minimum points required to pass the test."
+    required: true
 outputs:
   result:
     description: "Outputs the result of the grader, indicating the success or failure of the test."
