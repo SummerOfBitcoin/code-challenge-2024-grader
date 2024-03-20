@@ -62,6 +62,7 @@ function run() {
   const timeout = parseFloat(core.getInput('timeout') || 10) * 60000 // Convert to minutes
   const maxScore = parseInt(core.getInput('max-score') || 100)
   const maxFee = parseInt(core.getInput('max-fee') || 100000000)
+  const passingScore = parseInt(core.getInput('passing-score') || 0)
 
   let output = ''
   let startTime
@@ -82,7 +83,19 @@ function run() {
     const score = calculateScore(fee, maxFee, weight, 4000000)
     console.log(`Score: ${score}\nFee: ${fee}\nWeight: ${weight}\nMax Fee: ${maxFee}\nMax Weight: 4000000`)
 
-    result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
+    if (score < passingScore) {
+      result = generateResult(
+        'fail',
+        testName,
+        command,
+        `You must have a score of at least ${passingScore} to pass the test. Your score was ${score}.`,
+        endTime - startTime,
+        maxScore,
+        score,
+      )
+    } else {
+      result = generateResult('pass', testName, command, output, endTime - startTime, maxScore, score)
+    }
   } catch (error) {
     endTime = new Date()
     const {status, errorMessage} = getErrorMessageAndStatus(error, command)
