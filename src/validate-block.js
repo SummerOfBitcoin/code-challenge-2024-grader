@@ -15,7 +15,7 @@ export const validateBlock = (coinbase, txids) => {
     )
   }
 
-  const mempool = JSON.parse(readFileSync('./valid-mempool.json'))
+  const mempool = JSON.parse(readFileSync('./code-challenge-2024-mempool/valid-mempool.json'))
   const set = new Set(mempool)
   for (let i = 1; i < txids.length; i++) {
     if (!set.has(txids[i])) {
@@ -51,7 +51,7 @@ export const validateBlock = (coinbase, txids) => {
   const wtxids = [coinbaseTx.getHash(true).reverse().toString('hex')]
 
   for (let i = 1; i < txids.length; i++) {
-    const tx = JSON.parse(readFileSync(`./valid-mempool/${txids[i]}.json`))
+    const tx = JSON.parse(readFileSync(`./code-challenge-2024-mempool/valid-mempool/${txids[i]}.json`))
     totalWeight += BigInt(tx.weight)
     totalFee += BigInt(tx.fee)
     const parsedTx = Transaction.fromHex(tx.hex)

@@ -1,6 +1,7 @@
 const core = require('@actions/core')
 const {execSync} = require('child_process')
 const {validate} = require('./test')
+const {readdirSync} = require('fs')
 
 const env = {
   PATH: process.env.PATH,
@@ -66,6 +67,7 @@ function run() {
   let startTime
   let endTime
   let result
+  console.log(JSON.stringify(readdirSync('.'), null, 2))
 
   try {
     if (setupCommand) {
