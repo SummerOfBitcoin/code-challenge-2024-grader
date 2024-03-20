@@ -1,6 +1,6 @@
 const core = require('@actions/core')
 const {execSync} = require('child_process')
-const {readFileSync} = require('fs')
+const {validate} = require('./test')
 
 const env = {
   PATH: process.env.PATH,
@@ -76,7 +76,7 @@ function run() {
     output = execSync(command, {timeout, env}).toString()
     endTime = new Date()
 
-    const {fee, weight} = JSON.parse(readFileSync('result.json', 'utf8'))
+    const {fee, weight} = validate()
     const score = calculateScore(fee, maxFee, weight, 4000000)
     console.log(`Score: ${score}\nFee: ${fee}\nWeight: ${weight}\nMax Fee: ${maxFee}\nMax Weight: 4000000`)
 
